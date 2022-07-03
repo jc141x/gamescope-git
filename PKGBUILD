@@ -5,10 +5,10 @@ _static_liftoff=1
 
 _pkgname=gamescope
 pkgname=${_pkgname}-git
-pkgver=3.11.23.r0.ga56b56d
+pkgver=11b3ad772022.06.20
 pkgrel=1
 pkgdesc="Micro-compositor formerly known as steamcompmgr"
-arch=(x86_64)
+arch=(amd64)
 url="https://github.com/Plagman/gamescope"
 license=("custom:BSD-2-Clause")
 depends=("libxcomposite1" "libxtst6" "libxres1" "libsdl2-2.0-0" "pipewire" "libseat1" "libxres1")
@@ -32,9 +32,11 @@ else
 fi
 
 pkgver() {
-    cd "$srcdir/$_pkgname"
-
-    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+    cd ${_pkgname}
+    _always=$(git describe --always | sed -e 's:-:.:g' -e 's:v::')
+    _commits=$(git rev-list --count HEAD | sed 's:-:.:g')
+    _date=$(git log -1 --date=short --pretty=format:%cd)
+    printf "%s%s%s\n" "${_commits}" "${_always}" "${_date}" | sed -e 's:-:.:g'  -e 's:_:.:g'
 }
 
 prepare() {
